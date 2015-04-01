@@ -1,6 +1,6 @@
 #Surgical Tools STL Files + Articles
 ---
-[Best Resource, Forcepts etc.](http://www.yeggi.com/q/surgical) 
+[Forceps, clamps, scissors etc.](http://www.yeggi.com/q/surgical+tools/) 
 
 [Tenaculum](http://www.123dapp.com/123C-3D-Model/Tenaculum/948143) 
 
