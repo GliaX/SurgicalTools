@@ -30,9 +30,9 @@ class StraightHemostat < CrystalScad::Printed
 
 		pipe = SquarePipe.new(size:@arm_thickness)
 		pipe.line(@arm_length)		
-		pipe.cw(20,28)
-		pipe.ccw(20,28)
-		
+		pipe.cw(r=20,angle=28)
+		pipe.ccw(r,angle)
+	
 		lower += pipe.pipe.translate(y:-@arm_thickness/2.0,z:@arm_thickness/2.0)
 		# note that ruby does alter the value in pipe.pipe with the upper command, so no need to do it again
 		upper += pipe.pipe
