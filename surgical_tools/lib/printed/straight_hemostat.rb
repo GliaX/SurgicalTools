@@ -1,7 +1,7 @@
 class StraightHemostat < CrystalScad::Printed
 	def initialize(args={})
 		@holding_pins_width = 4
-		@holding_pins_length = 11
+		@holding_pins_length = 10
 		# Valleys of the holding pins			
 		@holding_pins_base_height = 1.8
 		# Highest part of the holding pins
@@ -116,6 +116,12 @@ class StraightHemostat < CrystalScad::Printed
 						cube([0.1,0.1,@height]).translate(x:@toolhead_length,y:@toolhead_tip_witdh),
 						cube([0.1,0.1,@height]).translate(y:@toolhead_witdh)
 			)
+
+		# This is a tiny cylinder that is put there in order to improve the print.
+		# In my testing, my printed put a tiny blob of excess material in there on direction change, stopping the device to close completely
+		# that little cut should fix this.
+		res -= cylinder(d:0.5,h:@hinge_area_height).translate(x:(@hinge_area_diameter+@hinge_clearance)/2.0).translate(z:@hinge_area_height-raise_z)
+
 		# TODO: The hemostat has slightly spiced teeth
 
 	end
