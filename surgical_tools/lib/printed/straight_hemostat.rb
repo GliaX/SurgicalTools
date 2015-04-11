@@ -1,15 +1,25 @@
 class StraightHemostat < CrystalScad::Printed
 	def initialize(args={})
 		@holding_pins_width = 4
-		@holding_pins_length = 10
-		@holding_pins_height = 2.4
+		@holding_pins_length = 11
+		# Valleys of the holding pins			
+		@holding_pins_base_height = 1.8
+		# Highest part of the holding pins
+		@holding_pins_height = 3.2
+
+		# Number of pins (including the furthermost one)
+		@holding_pin_count = 5	
+		# Length of each pin		 
+		@holding_pin_length = 1
+		# Spacing between each pin (must be greater than pin length)
+		@holding_pin_spacing = 1.3
 
 		@arm_thickness = 5
 		@arm_length = 40 # TODO: measure on the original
 		@height = 5	
 		@hinge_area_height = 2.5
 
-		@hinge_area_diameter = 10
+		@hinge_area_diameter = 11.3
 		@hinge_hole_diameter = 3.4
 		@hinge_clearance = 1.5 # extra clearance for the hinge, higher values mean more possible rotation
 
@@ -17,7 +27,9 @@ class StraightHemostat < CrystalScad::Printed
 		@toolhead_witdh = 5	
 		@toolhead_tip_witdh = 3
 		@toolhead_length = 40
-	
+		
+		# Angle of the two parts to each other, only for show
+		@opening_angle = 0
 
 	end
 	
@@ -31,13 +43,9 @@ class StraightHemostat < CrystalScad::Printed
 		# mirror it in in y direction, then add the hinge.
 		upper += Grip.new(height:@height).part(show)
 		
-		# TODO: The locking mechanism is to be implemented 
-		# I'm adding a dummy cube right now in order to test out the hinge mechanism first.
-		lower += cube([@holding_pins_width,@holding_pins_length,@holding_pins_height]).translate(x:-@holding_pins_width)
-		upper += cube([@holding_pins_width,@holding_pins_length,@holding_pins_height]).translate(x:-@holding_pins_width,z:@height-@holding_pins_height)
-		
-
-	#	lower += cube([@arm_length,@arm_thickness,@height]).translate(y:-@arm_thickness)
+		# Locking mechanism
+		lower += locking_pins.translate(x:-@holding_pins_width)
+		upper += locking_pins.mirror(z:1).translate(x:-@holding_pins_width,z:@height)			
 
 		pipe = SquarePipe.new(size:@arm_thickness)
 		pipe.line(@arm_length)		
@@ -74,7 +82,7 @@ class StraightHemostat < CrystalScad::Printed
 
 		if show
 			res	= lower.color("Aquamarine") 
-			res += upper.mirror(y:1).color("DarkTurquoise").rotate(z:-15)
+			res += upper.mirror(y:1).color("DarkTurquoise").rotate(z:-@opening_angle)
 		else
 			res	= lower
 			res += upper.translate(y:@holding_pins_length*2).mirror(z:1).translate(y:15,z:@height)
@@ -82,6 +90,15 @@ class StraightHemostat < CrystalScad::Printed
 	
 		res		
 	end
+
+	def locking_pins
+		res = cube([@holding_pins_width,@holding_pins_length,@holding_pins_base_height])
+		@holding_pin_count.times do |i|
+			res += cube([@holding_pins_width,@holding_pin_length,@holding_pins_height]).translate(y:(@holding_pin_length+@holding_pin_spacing)*i)
+		end	
+		res
+	end
+
 
 	def toolhead(args={})
 		raise_z = args[:raise_z] || 0
