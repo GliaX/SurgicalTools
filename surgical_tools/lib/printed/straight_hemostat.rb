@@ -123,7 +123,12 @@ class StraightHemostat < CrystalScad::Printed
 		# that little cut should fix this.
 		res -= cylinder(d:0.5,h:@hinge_area_height).translate(x:(@hinge_area_diameter+@hinge_clearance)/2.0).translate(z:@hinge_area_height-raise_z)
 
-		# TODO: The hemostat has slightly spiced teeth
+		# The teeth are currently quite unparametric. Let's try if it works.
+		(@toolhead_length/0.8).round.times do |i|
+			res -= cylinder(d:0.6,h:@height).translate(x:(@hinge_area_diameter+@hinge_clearance)/2.0+1.2+i*0.8)
+		end
+
+		res
 
 	end
 
