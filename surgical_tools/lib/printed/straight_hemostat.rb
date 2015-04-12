@@ -1,18 +1,18 @@
 class StraightHemostat < CrystalScad::Printed
 	def initialize(args={})
-		@holding_pins_width = 4
+		@holding_pins_width = 7
 		@holding_pins_length = 10
 		# Valleys of the holding pins			
-		@holding_pins_base_height = 1.8
+		@holding_pins_base_height = 2.2
 		# Highest part of the holding pins
 		@holding_pins_height = 3.2
 
-		# Number of pins (including the furthermost one)
-		@holding_pin_count = 5	
+		# Number of pins 
+		@holding_pin_count = 4	
 		# Length of each pin		 
 		@holding_pin_length = 1
 		# Spacing between each pin (must be greater than pin length)
-		@holding_pin_spacing = 1.3
+		@holding_pin_spacing = 1.5
 
 		@arm_thickness = 5
 		@arm_length = 40 # TODO: measure on the original
@@ -94,9 +94,10 @@ class StraightHemostat < CrystalScad::Printed
 	def locking_pins
 		res = cube([@holding_pins_width,@holding_pins_length,@holding_pins_base_height])
 		@holding_pin_count.times do |i|
-			res += cube([@holding_pins_width,@holding_pin_length,@holding_pins_height]).translate(y:(@holding_pin_length+@holding_pin_spacing)*i)
+			res += cube([@holding_pins_width,@holding_pin_length,@holding_pins_height]).translate(y:(@holding_pin_length+@holding_pin_spacing)*(i+1))
 		end	
-		res
+		# move 1 pin inwards
+		res.translate(y:-@holding_pin_length)
 	end
 
 
