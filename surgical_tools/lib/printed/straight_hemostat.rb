@@ -15,7 +15,14 @@ class StraightHemostat < CrystalScad::Printed
 		@holding_pin_spacing = 1.5
 
 		@arm_thickness = 5
-		@arm_length = 40 # TODO: measure on the original
+
+		# Bending radius of the arm 	
+		@arm_radius=175
+		@arm_angle=20
+		# Additional length of straight line towards the grip
+		@arm_additional_length = 10
+
+
 		@height = 5	
 		@hinge_area_height = 2.5
 
@@ -47,12 +54,20 @@ class StraightHemostat < CrystalScad::Printed
 		lower += locking_pins.translate(x:-@holding_pins_width)
 		upper += locking_pins.mirror(z:1).translate(x:-@holding_pins_width,z:@height)			
 
-		pipe = SquarePipe.new(size:@arm_thickness)
-		pipe.line(@arm_length)		
-		pipe.cw(r=21.5,angle=28)
-		pipe.ccw(r,angle)
+		# moving the grip with the holding pins to a position where the first holding pin would
+		# almost engage in closed, but not pressurized state 
+		holding_pins_offset = -@holding_pins_length/2.0+@holding_pin_length		
+		lower.translate(y:holding_pins_offset)
+		upper.translate(y:holding_pins_offset)
 	
-		lower += pipe.pipe.translate(y:-@arm_thickness/2.0,z:@arm_thickness/2.0)
+		# This defines the arm shape
+		pipe = SquarePipe.new(size:@arm_thickness)
+		# The bent towards the hinge
+		pipe.ccw(@arm_radius,@arm_angle)	
+		# And an additional line, if configured 
+		pipe.line(@arm_additional_length)	if @arm_additional_length > 0
+		
+		lower += pipe.pipe.translate(y:-@arm_thickness/2.0+holding_pins_offset,z:@arm_thickness/2.0)
 		# note that ruby does alter the value in pipe.pipe with the upper command, so no need to do it again
 		upper += pipe.pipe
 		
