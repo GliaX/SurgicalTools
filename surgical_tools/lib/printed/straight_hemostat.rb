@@ -17,10 +17,10 @@ class StraightHemostat < CrystalScad::Printed
 		@arm_thickness = 5
 
 		# Bending radius of the arm 	
-		@arm_radius=175
-		@arm_angle=20
+		@arm_radius=155
+		@arm_angle=15
 		# Additional length of straight line towards the grip
-		@arm_additional_length = 10
+		@arm_additional_length = 20
 
 
 		@height = 5	
@@ -41,39 +41,6 @@ class StraightHemostat < CrystalScad::Printed
 	end
 	
 	def part(show)
-		
-		# defining the lower part as the one where the hinge has a male part
-		lower = Grip.new(height:@height).part(show)
-		
-		#	the upper part has a lot of similarities with the lower part
-		# So, we're doing exactly the same for pretty much everything except the hinge(?), then
-		# mirror it in in y direction, then add the hinge.
-		upper += Grip.new(height:@height).part(show)
-		
-		# Locking mechanism
-		lower += locking_pins.translate(x:-@holding_pins_width)
-		upper += locking_pins.mirror(z:1).translate(x:-@holding_pins_width,z:@height)			
-
-		# moving the grip with the holding pins to a position where the first holding pin would
-		# almost engage in closed, but not pressurized state 
-		holding_pins_offset = -@holding_pins_length/2.0+@holding_pin_length		
-		lower.translate(y:holding_pins_offset)
-		upper.translate(y:holding_pins_offset)
-	
-		# This defines the arm shape
-		pipe = SquarePipe.new(size:@arm_thickness)
-		# The bent towards the hinge
-		pipe.ccw(@arm_radius,@arm_angle)	
-		# And an additional line, if configured 
-		pipe.line(@arm_additional_length)	if @arm_additional_length > 0
-		
-		lower += pipe.pipe.translate(y:-@arm_thickness/2.0+holding_pins_offset,z:@arm_thickness/2.0)
-		# note that ruby does alter the value in pipe.pipe with the upper command, so no need to do it again
-		upper += pipe.pipe
-		
-		# Putting the now upcoming hinge in the center
-		lower.translate(x:-pipe.sum_x,y:-@hinge_area_diameter/2.0)
-		upper.translate(x:-pipe.sum_x,y:-@hinge_area_diameter/2.0)
 
 		# Hinge part
 		lower += cylinder(d:@hinge_area_diameter,h:@hinge_area_height)	
@@ -82,6 +49,23 @@ class StraightHemostat < CrystalScad::Printed
 		# Toolhead part		
 		lower += toolhead()
 		upper += toolhead(raise_z:@height-@hinge_area_height)
+
+
+
+	
+		# This defines the arm shape
+		pipe = SquarePipe.new(size:@arm_thickness)
+		# And an additional line, if configured 
+		pipe.line(@arm_additional_length)	if @arm_additional_length > 0
+		# The bent towards the hinge
+		pipe.ccw(@arm_radius,@arm_angle)	
+		
+		lower += pipe.pipe.mirror(x:1).translate(y:3,z:@arm_thickness/2.0)
+		# note that ruby does alter the value in pipe.pipe with the upper command, so no need to do it again
+		upper += pipe.pipe		
+
+
+
 
 		# Hinge inner cut
 		lower -= cylinder(d:@hinge_hole_diameter,h:@height+0.2).translate(z:-0.1)
@@ -93,6 +77,41 @@ class StraightHemostat < CrystalScad::Printed
 		upper -= cylinder(d:@hinge_area_diameter+@hinge_clearance,h:@hinge_area_height+0.1)#.translate(z:@hinge_area_height)
 
 
+		# in order to attach the grip properly, temporarily  move the arm
+		lower.translate(x:pipe.x+@arm_additional_length)
+		upper.translate(x:pipe.x+@arm_additional_length)
+
+		# I need to calculate one side of the y value for putting the grip in the right place
+		y = ((pipe.x+@arm_additional_length) / Math::sin(radians(90-@arm_angle))) * Math::sin(radians(@arm_angle)) 
+
+		lower += Grip.new(height:@height).part(show).mirror(y:1).rotate(z:-@arm_angle).translate(y:y/2.0)
+		upper += Grip.new(height:@height).part(show).mirror(y:1).rotate(z:-@arm_angle).translate(y:y/2.0)
+		
+	
+		# FIXME: Locking mechanism
+		lower += locking_pins.translate(x:-@holding_pins_width).mirror(y:1).rotate(z:-@arm_angle).translate(y:y/2.0)
+		upper += locking_pins.mirror(z:1).translate(x:-@holding_pins_width,z:@height).mirror(y:1).rotate(z:-@arm_angle).translate(y:y/2.0)		
+
+
+	# FIXME: moving stuff around broke opening angle
+=begin
+
+		# moving the grip with the holding pins to a position where the first holding pin would
+		# almost engage in closed, but not pressurized state 
+		holding_pins_offset = -@holding_pins_length/2.0+@holding_pin_length		
+		lower.translate(y:holding_pins_offset)
+		upper.translate(y:holding_pins_offset)
+
+		lower.rotate(z:@arm_angle)
+		upper.rotate(z:@arm_angle)
+
+		
+		# Putting the now upcoming hinge in the center
+		lower.translate(x:-pipe.sum_x,y:-@hinge_area_diameter/2.0)
+		upper.translate(x:-pipe.sum_x,y:-@hinge_area_diameter/2.0)
+
+
+=end
 			
 
 		if show
