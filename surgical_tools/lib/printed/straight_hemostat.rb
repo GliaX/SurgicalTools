@@ -13,6 +13,9 @@ class StraightHemostat < CrystalScad::Printed
 		@holding_pin_length = 1.5
 		# Spacing between each pin (must be greater than pin length)
 		@holding_pin_spacing = 1.5
+	
+		# Rotation of the holding pins
+		@holding_pin_rotation = 6
 
 		@arm_thickness = 7
 
@@ -86,9 +89,9 @@ class StraightHemostat < CrystalScad::Printed
 		upper += Grip.new(height:@height).part(show).mirror(y:1).rotate(z:-@arm_angle).translate(y:y/2.0)
 		
 	
-		# Locking pins, non-rotated
-		lower += locking_pins.translate(x:-@holding_pins_width).mirror(y:1).translate(y:y/2.0)
-		upper += locking_pins.mirror(z:1).translate(x:-@holding_pins_width,z:@height).mirror(y:1).translate(y:y/2.0)		
+		# Locking pins
+		lower += locking_pins.translate(x:-@holding_pins_width).mirror(y:1).rotate(z:-@holding_pin_rotation).translate(y:y/2.0)
+		upper += locking_pins.mirror(z:1).translate(x:-@holding_pins_width,z:@height).mirror(y:1).rotate(z:-@holding_pin_rotation).translate(y:y/2.0)		
 
 
 		# Moving it all back to hinge as center
