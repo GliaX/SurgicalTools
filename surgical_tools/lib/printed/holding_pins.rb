@@ -7,11 +7,12 @@ class HoldingPins < CrystalScad::Printed
 		@additional_connection_wall = 3.5
 
 		# height of the base, which is starts at the grip
-		@base_height = 5
+		@base_height = 7
 
 		# height of the valleys
-		@valley_height = 2.0
-		@mountain_height = 3.4 
+		@valley_height = 3.0	
+		@valley_spacing = 0.7
+		@mountain_height = 5.4 
 
 		# the first tooth is tiny bit smaller
 		@first_tooth_mountain_height = @mountain_height - 0.2
@@ -42,7 +43,7 @@ class HoldingPins < CrystalScad::Printed
 			# making the first valley from the grip a bit longer
 			x += 0.4 if i == 0
 
-			x += 0.5
+			x += @valley_spacing
 			points << [x,@valley_height] # valley 
 			points << [x,@mountain_height] # triangle 
 	
