@@ -135,15 +135,13 @@ class StraightHemostat < CrystalScad::Printed
 						cube([0.1,0.1,@height]).translate(y:@toolhead_witdh)
 			)
 
-		# This is a tiny cylinder that is put there in order to improve the print.
-		# In my testing, my printed put a tiny blob of excess material in there on direction change, stopping the device to close completely
-		# that little cut should fix this.
-		res -= cylinder(d:0.5,h:@hinge_area_height).translate(x:(@hinge_area_diameter+@hinge_clearance)/2.0).translate(z:@hinge_area_height-raise_z)
-
 		# The teeth are currently quite unparametric. Let's try if it works.
 		(@toolhead_length/1).round.times do |i|
 			res -= cylinder(d:0.8,h:@height).translate(x:(@hinge_area_diameter+@hinge_clearance)/2.0+1.2+i+offset)
 		end
+
+		# I'm removing a tiny bit more of material to not not interfere with the gripping mechanism before the "teeth" can engage
+		res -= long_slot(d:1,l:1,h:@height).translate(x:(@hinge_area_diameter+@hinge_clearance)/2.0-0.5)
 
 		res
 

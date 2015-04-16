@@ -10,9 +10,10 @@ class HoldingPins < CrystalScad::Printed
 		@base_height = 7
 
 		# height of the valleys
-		@valley_height = 3.0	
-		@valley_spacing = 0.7
-		@mountain_height = 5.4 
+		@valley_height = 2.2	
+		@valley_spacing = 0.9
+		@mountain_height = 4.6 
+		@mountain_thickness = 0.8
 
 		# the first tooth is tiny bit smaller
 		@first_tooth_mountain_height = @mountain_height - 0.2
@@ -48,13 +49,13 @@ class HoldingPins < CrystalScad::Printed
 			points << [x,@mountain_height] # triangle 
 	
 			# I'm adding a bit more material to the tops, so they won't be printed single walled
-			x += 0.5
+			x += @mountain_thickness
 			points << [x,@mountain_height] # triangle 
 
 		
 			# i'm making the last increment smaller, so it will not have excess material beyond the last tooth
 			if i == 2 		
-				x += 1 
+				x += 1
 			else
 				x += 1.5 
 			end	
