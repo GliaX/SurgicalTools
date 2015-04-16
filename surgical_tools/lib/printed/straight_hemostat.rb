@@ -105,7 +105,7 @@ class StraightHemostat < CrystalScad::Printed
 			res += upper.mirror(y:1).color("DarkTurquoise").rotate(z:@opening_angle)
 		else
 			res	= lower
-			res += upper.translate(y:@holding_pins_length*2).mirror(z:1).translate(x:13.0,y:5,z:@height)
+			res += upper.translate(y:@holding_pins_length*2).mirror(z:1).translate(x:13.5,y:4,z:@height)
 		end
 	
 		res		
