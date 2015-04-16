@@ -2,9 +2,10 @@ class HoldingPins < CrystalScad::Printed
 
 	def initialize(args={})
 		@holding_pins_width = 7
-	end
 
-	def part(show)
+		# additional wall to connect towards the grip
+		@additional_connection_wall = 3.5
+
 		# height of the base, which is starts at the grip
 		@base_height = 5
 
@@ -15,12 +16,20 @@ class HoldingPins < CrystalScad::Printed
 		# the first tooth is tiny bit smaller
 		@first_tooth_mountain_height = @mountain_height - 0.2
 
+	end
+
+	def part(show)
+
 		# I'm drawing the holding pins as a 2d polygon here and will extrude it later.
 		points = []
 		points << [0,0] # starting point
 		points << [0,@base_height] # the connection from the grip
 
-		x = 2.5		
+		x = @additional_connection_wall
+		points << [x,@base_height] # additional wall to connect to the grip
+
+
+		x += 2.5		
 		points << [x,@valley_height] # triangle top 
 			
 		
@@ -29,6 +38,9 @@ class HoldingPins < CrystalScad::Printed
 			if i == 2 
 				@mountain_height = @first_tooth_mountain_height
 			end
+
+			# making the first valley from the grip a bit longer
+			x += 0.4 if i == 0
 
 			x += 0.5
 			points << [x,@valley_height] # valley 
@@ -63,7 +75,7 @@ class HoldingPins < CrystalScad::Printed
 
 		
 
-		res.linear_extrude(height:@holding_pins_width).rotate(x:90).rotate(z:90)
+		res.linear_extrude(height:@holding_pins_width).rotate(x:90).rotate(z:90).translate(y:-@additional_connection_wall)
 	end
 
 

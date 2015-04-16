@@ -20,7 +20,7 @@ class StraightHemostat < CrystalScad::Printed
 		@arm_radius=155
 		@arm_angle=15
 		# Additional length of straight line towards the grip
-		@arm_additional_length = 20
+		@arm_additional_length = 30
 
 
 		@height = 5	
@@ -43,16 +43,14 @@ class StraightHemostat < CrystalScad::Printed
 	def part(show)
 
 		# Hinge part
-		lower += cylinder(d:@hinge_area_diameter,h:@hinge_area_height)	
+		lower += cylinder(d:@hinge_area_diameter,h:@hinge_area_height).
 		upper += cylinder(d:@hinge_area_diameter,h:@hinge_area_height).translate(z:@height-@hinge_area_height)
 
 		# Toolhead part		
-		lower += toolhead()
-		upper += toolhead(raise_z:@height-@hinge_area_height)
+		lower += toolhead().mirror(y:1)
+		upper += toolhead(raise_z:@height-@hinge_area_height).mirror(y:1)
 
 
-
-	
 		# This defines the arm shape
 		pipe = SquarePipe.new(size:@arm_thickness)
 		# And an additional line, if configured 
@@ -63,8 +61,6 @@ class StraightHemostat < CrystalScad::Printed
 		lower += pipe.pipe.mirror(x:1).translate(y:3,z:@arm_thickness/2.0)
 		# note that ruby does alter the value in pipe.pipe with the upper command, so no need to do it again
 		upper += pipe.pipe		
-
-
 
 
 		# Hinge inner cut
@@ -88,35 +84,20 @@ class StraightHemostat < CrystalScad::Printed
 		upper += Grip.new(height:@height).part(show).mirror(y:1).rotate(z:-@arm_angle).translate(y:y/2.0)
 		
 	
-		# FIXME: Locking mechanism
-		lower += locking_pins.translate(x:-@holding_pins_width).mirror(y:1).rotate(z:-@arm_angle).translate(y:y/2.0)
-		upper += locking_pins.mirror(z:1).translate(x:-@holding_pins_width,z:@height).mirror(y:1).rotate(z:-@arm_angle).translate(y:y/2.0)		
+		# Locking pins, non-rotated
+		lower += locking_pins.translate(x:-@holding_pins_width).mirror(y:1).translate(y:y/2.0)
+		upper += locking_pins.mirror(z:1).translate(x:-@holding_pins_width,z:@height).mirror(y:1).translate(y:y/2.0)		
 
 
-	# FIXME: moving stuff around broke opening angle
-=begin
+		# Moving it all back to hinge as center
+		lower.translate(x:-pipe.x-@arm_additional_length)
+		upper.translate(x:-pipe.x-@arm_additional_length)
 
-		# moving the grip with the holding pins to a position where the first holding pin would
-		# almost engage in closed, but not pressurized state 
-		holding_pins_offset = -@holding_pins_length/2.0+@holding_pin_length		
-		lower.translate(y:holding_pins_offset)
-		upper.translate(y:holding_pins_offset)
-
-		lower.rotate(z:@arm_angle)
-		upper.rotate(z:@arm_angle)
-
-		
-		# Putting the now upcoming hinge in the center
-		lower.translate(x:-pipe.sum_x,y:-@hinge_area_diameter/2.0)
-		upper.translate(x:-pipe.sum_x,y:-@hinge_area_diameter/2.0)
-
-
-=end
 			
 
 		if show
 			res	= lower.color("Aquamarine") 
-			res += upper.mirror(y:1).color("DarkTurquoise").rotate(z:-@opening_angle)
+			res += upper.mirror(y:1).color("DarkTurquoise").rotate(z:@opening_angle)
 		else
 			res	= lower
 			res += upper.translate(y:@holding_pins_length*2).mirror(z:1).translate(y:15,z:@height)
