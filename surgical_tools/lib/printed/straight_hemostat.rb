@@ -48,7 +48,7 @@ class StraightHemostat < CrystalScad::Printed
 
 		# Toolhead part		
 		lower += toolhead().mirror(y:1)
-		upper += toolhead(raise_z:@height-@hinge_area_height).mirror(y:1)
+		upper += toolhead(raise_z:@height-@hinge_area_height,offset:0.5).mirror(y:1)
 
 
 		# This defines the arm shape
@@ -112,7 +112,9 @@ class StraightHemostat < CrystalScad::Printed
 
 
 	def toolhead(args={})
-		raise_z = args[:raise_z] || 0
+		raise_z = args[:raise_z] || 0 # for hinge
+
+		offset = args[:offset] || 0 # offset for better gripping
 
 		# Hinge to toolhead connection
 		res = hull(
@@ -134,8 +136,8 @@ class StraightHemostat < CrystalScad::Printed
 		res -= cylinder(d:0.5,h:@hinge_area_height).translate(x:(@hinge_area_diameter+@hinge_clearance)/2.0).translate(z:@hinge_area_height-raise_z)
 
 		# The teeth are currently quite unparametric. Let's try if it works.
-		(@toolhead_length/0.8).round.times do |i|
-			res -= cylinder(d:0.6,h:@height).translate(x:(@hinge_area_diameter+@hinge_clearance)/2.0+1.2+i*0.8)
+		(@toolhead_length/1).round.times do |i|
+			res -= cylinder(d:0.8,h:@height).translate(x:(@hinge_area_diameter+@hinge_clearance)/2.0+1.2+i+offset)
 		end
 
 		res
