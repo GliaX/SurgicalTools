@@ -47,6 +47,15 @@ class StraightHemostat < CrystalScad::Printed
 
 	end
 	
+	def view1
+		@opening_angle = 15
+	end
+
+	def view2
+		@opening_angle = -11.2
+	end
+
+
 	def part(show)
 
 		# Hinge part
