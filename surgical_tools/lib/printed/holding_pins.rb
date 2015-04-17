@@ -1,10 +1,10 @@
 class HoldingPins < CrystalScad::Printed
 
 	def initialize(args={})
-		@holding_pins_width = 7
+		@holding_pins_width = 12
 
 		# additional wall to connect towards the grip
-		@additional_connection_wall = 3.5
+		@additional_connection_wall = 5
 
 		# height of the base, which is starts at the grip
 		@base_height = 7
