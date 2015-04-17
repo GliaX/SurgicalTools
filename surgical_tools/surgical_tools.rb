@@ -38,6 +38,12 @@ require_all "lib/**/*.rb"
 res = Surgical_toolsAssembly.new.show
 
 res.save("surgical_tools.scad","$fn=64;")
-
 @@bom.save("bom.txt")
+
+
+
+save_all(StraightHemostat)
+
+
+
 
