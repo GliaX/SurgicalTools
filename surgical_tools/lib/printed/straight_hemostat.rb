@@ -17,7 +17,10 @@ class StraightHemostat < CrystalScad::Printed
 		# Rotation of the holding pins
 		@holding_pin_rotation = 6
 
-		@arm_thickness = 7
+		# Height of the arms and the rest apart from the hinge
+		@height = 7	
+		# Thickness of the arms
+		@arm_thickness = 10
 
 		# Bending radius of the arm 	
 		@arm_radius=155
@@ -26,12 +29,11 @@ class StraightHemostat < CrystalScad::Printed
 		@arm_additional_length = 30
 
 		# spacing between the arms
-		@arm_spacing = 3.8
+		@arm_spacing = 5.2
 
-		@height = 7	
 		@hinge_area_height = @height / 2.0
 
-		@hinge_area_diameter = 14.6
+		@hinge_area_diameter = 20.5
 		@hinge_hole_diameter = 3.4
 		@hinge_clearance = 1.5 # extra clearance for the hinge, higher values mean more possible rotation
 
@@ -57,13 +59,14 @@ class StraightHemostat < CrystalScad::Printed
 
 
 		# This defines the arm shape
-		pipe = SquarePipe.new(size:@arm_thickness)
+		pipe = RectanglePipe.new(size:[@height,@arm_thickness])
+
 		# And an additional line, if configured 
 		pipe.line(@arm_additional_length)	if @arm_additional_length > 0
 		# The bent towards the hinge
 		pipe.ccw(@arm_radius,@arm_angle)	
 		
-		lower += pipe.pipe.mirror(x:1).translate(y:@arm_spacing,z:@arm_thickness/2.0)
+		lower += pipe.pipe.mirror(x:1).translate(y:@arm_spacing,z:@height/2.0)
 		# note that ruby does alter the value in pipe.pipe with the upper command, so no need to do it again
 		upper += pipe.pipe		
 
@@ -105,7 +108,7 @@ class StraightHemostat < CrystalScad::Printed
 			res += upper.mirror(y:1).color("DarkTurquoise").rotate(z:@opening_angle)
 		else
 			res	= lower
-			res += upper.translate(y:@holding_pins_length*2).mirror(z:1).translate(x:13.5,y:4,z:@height)
+			res += upper.translate(y:@holding_pins_length*2).mirror(z:1).translate(x:14,y:6,z:@height)
 		end
 	
 		res		
