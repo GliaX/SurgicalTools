@@ -73,11 +73,12 @@ class TowelClamp <  StraightHemostat
 		angle=10
 		res.rotate(z:angle)
 
-		toolhead_x = (@toolhead_length / Math::sin(radians(90))) * Math::sin(radians(90-angle))
-		toolhead_y = (toolhead_x / Math::sin(radians(90-angle))) * Math::sin(radians(angle))
-
-
 		@toolhead_tip_width = 4
+	
+		t = Triangle.new(alpha:90,beta:angle,a:@toolhead_length)
+		toolhead_x = t.c
+		toolhead_y = t.b
+
 
 		res += hull(
 			cube([0.1,0.1,@height]).translate(x:toolhead_x),
