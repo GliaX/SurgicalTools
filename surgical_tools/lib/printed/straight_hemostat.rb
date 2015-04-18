@@ -38,8 +38,8 @@ class StraightHemostat < CrystalScad::Printed
 		@hinge_clearance = 1.5 # extra clearance for the hinge, higher values mean more possible rotation
 
 		# TODO: The values here are guesstimated for a proof of concept model 
-		@toolhead_witdh = 5	
-		@toolhead_tip_witdh = 3
+		@toolhead_width = 5	
+		@toolhead_tip_width = 3
 		@toolhead_length = 40
 		
 		# Angle of the two parts to each other, only for show
@@ -142,14 +142,14 @@ class StraightHemostat < CrystalScad::Printed
 		res = hull(
 					cylinder(d:@hinge_area_diameter,h:@hinge_area_height).translate(z:raise_z),
 					cube([0.1,0.1,@hinge_area_height]).translate(z:raise_z),
-					cube([0.1,0.1,@hinge_area_height]).translate(y:@toolhead_witdh,z:raise_z)
+					cube([0.1,0.1,@hinge_area_height]).translate(y:@toolhead_width,z:raise_z)
 		)
 	
 		res += hull(
 						cube([0.1,0.1,@height]),
 						cube([0.1,0.1,@height]).translate(x:@toolhead_length),
-						cube([0.1,0.1,@height]).translate(x:@toolhead_length,y:@toolhead_tip_witdh),
-						cube([0.1,0.1,@height]).translate(y:@toolhead_witdh)
+						cube([0.1,0.1,@height]).translate(x:@toolhead_length,y:@toolhead_tip_width),
+						cube([0.1,0.1,@height]).translate(y:@toolhead_width)
 			)
 
 		# The teeth are currently quite unparametric. Let's try if it works.

@@ -28,8 +28,8 @@ class TowelClamp <  StraightHemostat
 		@hinge_hole_diameter = 3.4
 		@hinge_clearance = 1.5 # extra clearance for the hinge, higher values mean more possible rotation
 
-		@toolhead_witdh = 11	
-		@toolhead_tip_witdh = 6
+		@toolhead_width = 11	
+		@toolhead_tip_width = 6
 		@toolhead_length = 45
 		
 		# Layer height, needed for the toolhead
@@ -61,8 +61,8 @@ class TowelClamp <  StraightHemostat
 		res = hull(
 						cube([0.1,0.1,@height]),
 						cube([0.1,0.1,@height]).translate(x:@toolhead_length),
-						cube([0.1,0.1,@height]).translate(x:@toolhead_length,y:@toolhead_tip_witdh),
-						cube([0.1,0.1,@height]).translate(y:@toolhead_witdh)
+						cube([0.1,0.1,@height]).translate(x:@toolhead_length,y:@toolhead_tip_width),
+						cube([0.1,0.1,@height]).translate(y:@toolhead_width)
 			)
 
 
@@ -94,7 +94,7 @@ class TowelClamp <  StraightHemostat
 		res += hull(
 					cylinder(d:@hinge_area_diameter,h:@hinge_area_height).translate(z:raise_z),
 					cube([0.1,0.1,@hinge_area_height]).translate(z:raise_z),
-					cube([0.1,0.1,@hinge_area_height]).translate(y:@toolhead_witdh,z:raise_z)
+					cube([0.1,0.1,@hinge_area_height]).translate(y:@toolhead_width,z:raise_z)
 		)
 
 
