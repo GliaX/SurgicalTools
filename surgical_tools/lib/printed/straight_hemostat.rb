@@ -63,8 +63,8 @@ class StraightHemostat < CrystalScad::Printed
 		upper += cylinder(d:@hinge_area_diameter,h:@hinge_area_height).translate(z:@height-@hinge_area_height)
 
 		# Toolhead part		
-		lower += toolhead().mirror(y:1)
-		upper += toolhead(raise_z:@height-@hinge_area_height,offset:0.5).mirror(y:1)
+		lower += toolhead(show:show).mirror(y:1)
+		upper += toolhead(raise_z:@height-@hinge_area_height,offset:0.5,show:show).mirror(y:1)
 
 
 		# This defines the arm shape
@@ -116,11 +116,16 @@ class StraightHemostat < CrystalScad::Printed
 			res	= lower.color("Aquamarine") 
 			res += upper.mirror(y:1).color("DarkTurquoise").rotate(z:@opening_angle)
 		else
-			res	= lower
-			res += upper.translate(y:@holding_pins_length*2).mirror(z:1).translate(x:14,y:6,z:@height)
+			res	= print_plate(lower,upper)
 		end
 	
 		res		
+	end
+
+	def print_plate(lower,upper)
+		res	= lower
+		res += upper.translate(y:@holding_pins_length*2).mirror(z:1).translate(x:14,y:6,z:@height)
+		res
 	end
 
 	def locking_pins
