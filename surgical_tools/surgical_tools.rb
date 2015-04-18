@@ -40,9 +40,8 @@ res = Surgical_toolsAssembly.new.show
 res.save("surgical_tools.scad","$fn=64;")
 @@bom.save("bom.txt")
 
-save_all(StraightHemostat)
-save_all(NeedleDriver)
-save_all(TowelClamp)
+tools = [StraightHemostat,NeedleDriver,TowelClamp,SpongeStick]
+tools.each{|tool| save_all(tool)}
 
 
 
