@@ -57,14 +57,13 @@ class StraightHemostat < CrystalScad::Printed
 
 
 	def part(show)
-
 		# Hinge part
-		lower += cylinder(d:@hinge_area_diameter,h:@hinge_area_height).
-		upper += cylinder(d:@hinge_area_diameter,h:@hinge_area_height).translate(z:@height-@hinge_area_height)
+		@lower += cylinder(d:@hinge_area_diameter,h:@hinge_area_height)
+		@upper += cylinder(d:@hinge_area_diameter,h:@hinge_area_height).translate(z:@height-@hinge_area_height)
 
 		# Toolhead part		
-		lower += toolhead(show:show).mirror(y:1)
-		upper += toolhead(raise_z:@height-@hinge_area_height,offset:0.5,show:show).mirror(y:1)
+		@lower += toolhead(show:show).mirror(y:1)
+		@upper += toolhead(raise_z:@height-@hinge_area_height,offset:0.5,show:show).mirror(y:1)
 
 
 		# This defines the arm shape
@@ -75,56 +74,56 @@ class StraightHemostat < CrystalScad::Printed
 		# The bent towards the hinge
 		pipe.ccw(@arm_radius,@arm_angle)	
 		
-		lower += pipe.pipe.mirror(x:1).translate(y:@arm_spacing,z:@height/2.0)
+		@lower += pipe.pipe.mirror(x:1).translate(y:@arm_spacing,z:@height/2.0)
 		# note that ruby does alter the value in pipe.pipe with the upper command, so no need to do it again
-		upper += pipe.pipe		
+		@upper += pipe.pipe		
 
 
 		# Hinge inner cut
-		lower -= cylinder(d:@hinge_hole_diameter,h:@height+0.2).translate(z:-0.1)
-		upper -= cylinder(d:@hinge_hole_diameter,h:@height+0.2).translate(z:-0.1)
+		@lower -= cylinder(d:@hinge_hole_diameter,h:@height+0.2).translate(z:-0.1)
+		@upper -= cylinder(d:@hinge_hole_diameter,h:@height+0.2).translate(z:-0.1)
 	
 
 		# Cutting out the excess walls of the hinge, so it can open freely, to a degree.
-		lower -= cylinder(d:@hinge_area_diameter+@hinge_clearance,h:@hinge_area_height+0.1).translate(z:@hinge_area_height)
-		upper -= cylinder(d:@hinge_area_diameter+@hinge_clearance,h:@hinge_area_height+0.1)#.translate(z:@hinge_area_height)
+		@lower -= cylinder(d:@hinge_area_diameter+@hinge_clearance,h:@hinge_area_height+0.1).translate(z:@hinge_area_height)
+		@upper -= cylinder(d:@hinge_area_diameter+@hinge_clearance,h:@hinge_area_height+0.1)#.translate(z:@hinge_area_height)
 
 
 		# in order to attach the grip properly, temporarily  move the arm
-		lower.translate(x:pipe.x+@arm_additional_length)
-		upper.translate(x:pipe.x+@arm_additional_length)
+		@lower.translate(x:pipe.x+@arm_additional_length)
+		@upper.translate(x:pipe.x+@arm_additional_length)
 
 		# I need to calculate one side of the y value for putting the grip in the right place
 		y = ((pipe.x+@arm_additional_length) / Math::sin(radians(90-@arm_angle))) * Math::sin(radians(@arm_angle)) 
 
-		lower += Grip.new(height:@height).part(show).mirror(y:1).rotate(z:-@arm_angle).translate(y:y/2.0)
-		upper += Grip.new(height:@height).part(show).mirror(y:1).rotate(z:-@arm_angle).translate(y:y/2.0)
+		@lower += Grip.new(height:@height).part(show).mirror(y:1).rotate(z:-@arm_angle).translate(y:y/2.0)
+		@upper += Grip.new(height:@height).part(show).mirror(y:1).rotate(z:-@arm_angle).translate(y:y/2.0)
 		
 	
 		# Locking pins
-		lower += locking_pins.translate(x:-@holding_pins_width).mirror(y:1).rotate(z:-@holding_pin_rotation).translate(y:y/2.0)
-		upper += locking_pins.mirror(z:1).translate(x:-@holding_pins_width,z:@height).mirror(y:1).rotate(z:-@holding_pin_rotation).translate(y:y/2.0)		
+		@lower += locking_pins.translate(x:-@holding_pins_width).mirror(y:1).rotate(z:-@holding_pin_rotation).translate(y:y/2.0)
+		@upper += locking_pins.mirror(z:1).translate(x:-@holding_pins_width,z:@height).mirror(y:1).rotate(z:-@holding_pin_rotation).translate(y:y/2.0)		
 
 
 		# Moving it all back to hinge as center
-		lower.translate(x:-pipe.x-@arm_additional_length)
-		upper.translate(x:-pipe.x-@arm_additional_length)
+		@lower.translate(x:-pipe.x-@arm_additional_length)
+		@upper.translate(x:-pipe.x-@arm_additional_length)
 
 			
 
 		if show
-			res	= lower.color("Aquamarine") 
-			res += upper.mirror(y:1).color("DarkTurquoise").rotate(z:@opening_angle)
+			res	= @lower.color("Aquamarine") 
+			res += @upper.mirror(y:1).color("DarkTurquoise").rotate(z:@opening_angle)
 		else
-			res	= print_plate(lower,upper)
-		end
-	
+			res	= print_plate
+		end	
+
 		res		
 	end
 
-	def print_plate(lower,upper)
-		res	= lower
-		res += upper.translate(y:@holding_pins_length*2).mirror(z:1).translate(x:14,y:6,z:@height)
+	def print_plate
+		res	= @lower
+		res += @upper.translate(y:@holding_pins_length*2).mirror(z:1).translate(x:14,y:6,z:@height)
 		res
 	end
 

@@ -33,10 +33,11 @@ class SpongeStick <  StraightHemostat
 		# the attachment
 		@attached_toolhead_height = 9	
 		@toolhead_tip_width = 4
-		@toolhead_length = 45
+		@toolhead_length = 75
+
 		@toolhead_slot_length = 5		
-		@toolhead_slot_diameter= 12		
-		@toolhead_slot_inner_diameter = 8
+		@toolhead_slot_diameter= 16		
+		@toolhead_slot_inner_diameter = 11
 		# make a connection from the hinge before raising the toolhead
 		@raised_toolhead_offset= 26
 
@@ -58,9 +59,17 @@ class SpongeStick <  StraightHemostat
 		@opening_angle = -8.4
 	end
 
-	def print_plate(lower,upper)
-		res	= lower
-		res += upper.translate(y:@holding_pins_length*2).mirror(z:1).translate(x:14,y:6,z:@height)
+	def view3 
+		towel_clamp
+	end
+	
+	def view4
+		toolhead_adapter
+	end
+
+	def print_plate
+		res	= @lower
+		res += @upper.translate(y:@holding_pins_length*2).mirror(z:1).translate(x:14,y:6,z:@height)
 		res += towel_clamp.rotate(x:90).rotate(z:-15).translate(x:-50,y:32)
 		res += towel_clamp.rotate(x:90).rotate(z:-15).translate(x:-65,y:10)
 		res
@@ -68,29 +77,30 @@ class SpongeStick <  StraightHemostat
 
 	# this is the actual clamp, as seperate part
 	def towel_clamp
-		res = long_slot(d:@toolhead_slot_diameter,l:@toolhead_length,h:@attached_toolhead_height)			
-		# create a knurled surface on top
-		res *= knurled_cube([@toolhead_slot_length*3.1,@toolhead_width,@toolhead_slot_diameter-0.6]).rotate(x:-90).translate(x:@toolhead_length-@toolhead_slot_length*3.1+@toolhead_slot_diameter/2.0-0.6,y:-@toolhead_width+0.3,z:@attached_toolhead_height)		
-		# add the base (again) with height minus the knurls 	
-		res += long_slot(d:@toolhead_slot_diameter,l:@toolhead_length,h:@attached_toolhead_height-0.5)			
-		# remove the long slot
-		res -= long_slot(d:@toolhead_slot_inner_diameter,l:@toolhead_slot_length,h:@attached_toolhead_height+0.2).translate(x:@toolhead_length-@toolhead_slot_length,z:-0.1)		
-						
-		res -= toolhead_adapter.rotate(x:-90).translate(x:-17.7,y:-@toolhead_width/2.0,z:(@attached_toolhead_height-@toolhead_width/2.0)+1)
+		# the basic shape
+		res = long_slot(d:@toolhead_slot_diameter,l:@toolhead_length,h:@attached_toolhead_height).translate(x:@toolhead_slot_diameter)
+		# create a cube to have the left end square		
+		res += cube([@toolhead_slot_diameter,@toolhead_slot_diameter,@attached_toolhead_height]).center_y			
 
-#		res += toolhead_adapter.rotate(x:90).translate(x:-17.7-20,y:@toolhead_width/2.0,z:(@attached_toolhead_height-@toolhead_width)/2.0)
+		# the actual tip of the toolhead
+		res -= long_slot(d:@toolhead_slot_inner_diameter,l:@toolhead_slot_length,h:@attached_toolhead_height+0.2).translate(x:@toolhead_slot_diameter+@toolhead_length-@toolhead_slot_length,z:-0.1)		
+
+		x_offset = @toolhead_slot_diameter/1.5+@toolhead_length-@toolhead_slot_length-1
+		(@toolhead_slot_length+@toolhead_slot_diameter/2.0).ceil.times do |i| 
+			res -= cylinder(d:1.4,h:@toolhead_slot_diameter+0.2).rotate(x:-90).translate(x:x_offset+i*1.8,y:-@toolhead_slot_diameter/2.0-0.1, z:@attached_toolhead_height)	
+		end
+						
+		# Adapter to the toolhead
+
+		res -= toolhead_adapter(7.2,9.1).rotate(y:90).translate(x:-0.01,y:0,z:@attached_toolhead_height/2.0).color("red")
 
 		res
 	end
 
 	# This provides the adapter where the toolhead can be glued on
-	def toolhead_adapter
-		hull(
-			cube([0.1,0.1,@height]),
-			cube([0.1,0.1,@height]).translate(x:@raised_toolhead_offset),
-			cube([0.1,0.1,@height]).translate(x:@raised_toolhead_offset,y:@toolhead_tip_width-0.1),
-			cube([0.1,0.1,@height]).translate(y:@toolhead_width-0.1)
-		)
+	def toolhead_adapter(d=7,l=40)
+		cylinder(d:d,h:l,fn:6)
+
 	end
 
 	def toolhead(args={})
@@ -98,13 +108,12 @@ class SpongeStick <  StraightHemostat
 
 		offset = args[:offset] || 0 # offset for better gripping
 
-
-
-
-		res = toolhead_adapter
-
-
-		res += towel_clamp.rotate(x:90).translate(x:@raised_toolhead_offset-8,y:@toolhead_width,z:@toolhead_width/2.0) if args[:show]
+	
+		# FIXME: this needs a bent connector in order to work, otherwise the actual toolhead will collide
+		# FIXME: second part not connected at 0
+		res = toolhead_adapter.rotate(z:30).rotate(y:90).translate(x:@hinge_area_diameter/2.0, z:Math::sqrt(3)/2*3.5)
+	
+			res += towel_clamp.rotate(x:90).translate(x:@raised_toolhead_offset-12,y:@toolhead_width-1.5,z:@toolhead_width/2.0) if args[:show]
 		
 
 		# I'm removing a tiny bit more of material to not not interfere with the gripping mechanism before the "teeth" can engage
