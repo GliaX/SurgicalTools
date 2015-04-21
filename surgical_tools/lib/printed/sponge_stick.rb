@@ -6,9 +6,6 @@ class SpongeStick <  StraightHemostat
 		# call Initialize from parent class
 		super(args)
 
-		# Height of the arms and the rest apart from the hinge
-		@height = 7
-
 		# Thickness of the arms
 		@arm_thickness = 10
 
@@ -21,8 +18,6 @@ class SpongeStick <  StraightHemostat
 
 		# spacing between the arms
 		@arm_spacing = 5.8
-
-		@hinge_area_height = @height / 2.0
 
 		@hinge_area_diameter = 23
 		@hinge_hole_diameter = 3.4
@@ -41,6 +36,12 @@ class SpongeStick <  StraightHemostat
 		@toolhead_attachment_diameter = 7
  		# extra inner margin of the negative part 
 		@toolhead_attachment_margin = 0.2 
+
+		# Height of the arms and the rest apart from the hinge
+		@height = Math::sqrt(3)/2.0*(@toolhead_attachment_diameter)
+
+		@hinge_area_height = @height / 2.0
+
 
 		@toolhead_slot_length = 5		
 		@toolhead_slot_diameter= 16		
@@ -122,8 +123,9 @@ class SpongeStick <  StraightHemostat
 	def toolhead(args={})
 		raise_z = args[:raise_z] || 0 # for hinge
 		offset = args[:offset] || 0 # offset for better gripping
+		y_offset = 5	
 
-		res = toolhead_adapter_male.translate(x:@hinge_area_diameter/2.0-5, y:4.5)
+		res = toolhead_adapter_male.translate(x:@hinge_area_diameter/2.0-5, y:y_offset)
 
 		if raise_z != 0
 			res.translate(z:-Math::sqrt(3)/2.0*(@toolhead_attachment_diameter/2.0)+@height)
@@ -132,7 +134,7 @@ class SpongeStick <  StraightHemostat
 		end
 
 		
-		res += towel_clamp.rotate(x:90).translate(x:@raised_toolhead_offset-12,y:@toolhead_width-1.5+4.5,z:@toolhead_width/2.0) if args[:show]
+		res += towel_clamp.rotate(x:90).translate(x:@raised_toolhead_offset-12,y:@toolhead_width-1.5+y_offset,z:@toolhead_width/2.0) if args[:show]
 		
 
 		# I'm removing a tiny bit more of material to not not interfere with the gripping mechanism before the "teeth" can engage
