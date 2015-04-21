@@ -35,6 +35,13 @@ class SpongeStick <  StraightHemostat
 		@toolhead_tip_width = 4
 		@toolhead_length = 75
 
+		# Attachment configuration the toolhead
+		@toolhead_attachment_length = 40
+		# Diameter of the heaxagonal attachment
+		@toolhead_attachment_diameter = 7
+ 		# extra inner margin of the negative part 
+		@toolhead_attachment_margin = 0.2 
+
 		@toolhead_slot_length = 5		
 		@toolhead_slot_diameter= 16		
 		@toolhead_slot_inner_diameter = 11
@@ -64,14 +71,17 @@ class SpongeStick <  StraightHemostat
 	end
 	
 	def view4
-		toolhead_adapter
+		toolhead_adapter_male
+	end
+
+	def output1
+		res = towel_clamp
+		res += towel_clamp.translate(y:@toolhead_slot_diameter+1)
 	end
 
 	def print_plate
 		res	= @lower
 		res += @upper.translate(y:@holding_pins_length*2).mirror(z:1).translate(x:14,y:6,z:@height)
-		res += towel_clamp.rotate(x:90).rotate(z:-15).translate(x:-50,y:32)
-		res += towel_clamp.rotate(x:90).rotate(z:-15).translate(x:-65,y:10)
 		res
 	end
 
@@ -92,28 +102,37 @@ class SpongeStick <  StraightHemostat
 						
 		# Adapter to the toolhead
 
-		res -= toolhead_adapter(7.2,9.1).rotate(y:90).translate(x:-0.01,y:0,z:@attached_toolhead_height/2.0).color("red")
+		res -= toolhead_adapter_female.translate(x:-0.01,y:0,z:@attached_toolhead_height/2.0).color("red")
 
 		res
 	end
 
 	# This provides the adapter where the toolhead can be glued on
-	def toolhead_adapter(d=7,l=40)
-		cylinder(d:d,h:l,fn:6)
-
+	def toolhead_adapter_female
+		cylinder(d:@toolhead_attachment_diameter+@toolhead_attachment_margin,h:@toolhead_attachment_length,fn:6).rotate(y:90)
 	end
+
+	def toolhead_adapter_male
+		# h is 5mm longer because I move it 5 back towards the hinge in the toolhead method 
+		cylinder(d:@toolhead_attachment_diameter,h:@toolhead_attachment_length+5,fn:6).rotate(z:30).rotate(y:90)
+	end
+
+
 
 	def toolhead(args={})
 		raise_z = args[:raise_z] || 0 # for hinge
-
 		offset = args[:offset] || 0 # offset for better gripping
 
-	
-		# FIXME: this needs a bent connector in order to work, otherwise the actual toolhead will collide
-		# FIXME: second part not connected at 0
-		res = toolhead_adapter.rotate(z:30).rotate(y:90).translate(x:@hinge_area_diameter/2.0, z:Math::sqrt(3)/2*3.5)
-	
-			res += towel_clamp.rotate(x:90).translate(x:@raised_toolhead_offset-12,y:@toolhead_width-1.5,z:@toolhead_width/2.0) if args[:show]
+		res = toolhead_adapter_male.translate(x:@hinge_area_diameter/2.0-5, y:4.5)
+
+		if raise_z != 0
+			res.translate(z:-Math::sqrt(3)/2.0*(@toolhead_attachment_diameter/2.0)+@height)
+		else
+			res.translate(z:Math::sqrt(3)/2.0*(@toolhead_attachment_diameter/2.0))
+		end
+
+		
+		res += towel_clamp.rotate(x:90).translate(x:@raised_toolhead_offset-12,y:@toolhead_width-1.5+4.5,z:@toolhead_width/2.0) if args[:show]
 		
 
 		# I'm removing a tiny bit more of material to not not interfere with the gripping mechanism before the "teeth" can engage

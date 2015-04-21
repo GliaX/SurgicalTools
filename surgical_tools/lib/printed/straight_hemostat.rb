@@ -57,6 +57,9 @@ class StraightHemostat < CrystalScad::Printed
 
 
 	def part(show)
+		@lower = nil
+		@upper = nil
+
 		# Hinge part
 		@lower += cylinder(d:@hinge_area_diameter,h:@hinge_area_height)
 		@upper += cylinder(d:@hinge_area_diameter,h:@hinge_area_height).translate(z:@height-@hinge_area_height)
@@ -64,8 +67,7 @@ class StraightHemostat < CrystalScad::Printed
 		# Toolhead part		
 		@lower += toolhead(show:show).mirror(y:1)
 		@upper += toolhead(raise_z:@height-@hinge_area_height,offset:0.5,show:show).mirror(y:1)
-
-
+		
 		# This defines the arm shape
 		pipe = RectanglePipe.new(size:[@height,@arm_thickness])
 
