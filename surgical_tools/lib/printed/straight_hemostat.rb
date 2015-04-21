@@ -82,8 +82,16 @@ class StraightHemostat < CrystalScad::Printed
 
 
 		# Hinge inner cut
-		@lower -= cylinder(d:@hinge_hole_diameter,h:@height+0.2).translate(z:-0.1)
-		@upper -= cylinder(d:@hinge_hole_diameter,h:@height+0.2).translate(z:-0.1)
+		bolt = Bolt.new(3,8,type:7380)		
+		@lower -= bolt.output
+		@upper -= bolt.output
+		
+		# nut on the other side of the hinge
+		nut = Nut.new(3)
+		@upper -= nut.output.translate(z:@height-1.5)
+		# Support structure
+		@upper += cylinder(d:3.25,h:1.5).translate(z:@height-1.5)
+		
 	
 
 		# Cutting out the excess walls of the hinge, so it can open freely, to a degree.
@@ -130,7 +138,7 @@ class StraightHemostat < CrystalScad::Printed
 	end
 
 	def locking_pins
-		res = HoldingPins.new.output
+		res = HoldingPins.new(height:@height).output
 	end
 
 
