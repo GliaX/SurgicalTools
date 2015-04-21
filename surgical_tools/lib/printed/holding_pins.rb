@@ -7,7 +7,7 @@ class HoldingPins < CrystalScad::Printed
 		@additional_connection_wall = 5
 
 		# height of the base, which is starts at the grip
-		@base_height = 7
+		@base_height = args[:height] || 7 
 
 		# height of the valleys
 		@valley_height = 2.2	
