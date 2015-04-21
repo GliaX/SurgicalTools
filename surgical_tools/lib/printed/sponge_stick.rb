@@ -24,16 +24,16 @@ class SpongeStick <  StraightHemostat
 		@hinge_clearance = 1.5 # extra clearance for the hinge, higher values mean more possible rotation
 
 		# the part coming from the hinge
-		@toolhead_width = 6	
+		@toolhead_width = 6.5	
 		# the attachment
 		@attached_toolhead_height = 9	
 		@toolhead_tip_width = 4
-		@toolhead_length = 75
+		@toolhead_length = 45
 
 		# Attachment configuration the toolhead
-		@toolhead_attachment_length = 40
+		@toolhead_attachment_length = 35
 		# Diameter of the heaxagonal attachment
-		@toolhead_attachment_diameter = 7
+		@toolhead_attachment_diameter = 8
  		# extra inner margin of the negative part 
 		@toolhead_attachment_margin = 0.2 
 
@@ -123,24 +123,32 @@ class SpongeStick <  StraightHemostat
 	def toolhead(args={})
 		raise_z = args[:raise_z] || 0 # for hinge
 		offset = args[:offset] || 0 # offset for better gripping
-		y_offset = 5	
+		y_offset = 5.5	
 
 		res = toolhead_adapter_male.translate(x:@hinge_area_diameter/2.0-5, y:y_offset)
-
-		if raise_z != 0
-			res.translate(z:-Math::sqrt(3)/2.0*(@toolhead_attachment_diameter/2.0)+@height)
-		else
+		
+		# position on the ground
+		if raise_z == 0
 			res.translate(z:Math::sqrt(3)/2.0*(@toolhead_attachment_diameter/2.0))
 		end
 
-		
-		res += towel_clamp.rotate(x:90).translate(x:@raised_toolhead_offset-12,y:@toolhead_width-1.5+y_offset,z:@toolhead_width/2.0) if args[:show]
-		
+		# Reinforcement of the toolhead
+		res += hull(
+			cube([0.1,0.1,@hinge_area_height]),
+			cube([0.1,0.1,@hinge_area_height]).translate(y:@hinge_area_diameter/2.0+1),
+			cube([0.1,0.1,@hinge_area_height]).translate(x:@hinge_area_diameter/2.0+6, y:y_offset+4),
+			cube([0.1,0.1,@hinge_area_height]).translate(x:@hinge_area_diameter/2.0+6, y:y_offset-4)
+		)
 
-		# I'm removing a tiny bit more of material to not not interfere with the gripping mechanism before the "teeth" can engage
-		#res -= long_slot(d:1,l:1,h:@height).translate(x:(@hinge_area_diameter+@hinge_clearance)/2.0-0.5)
-		
+		# position on the top if making the upper part
+		if raise_z != 0
+			res.translate(z:-Math::sqrt(3)/2.0*(@toolhead_attachment_diameter/2.0)+@height)
+		end
 
+
+		# showing the towel clamp toolhead on show/view methods	
+		res += towel_clamp.rotate(x:90).translate(x:@raised_toolhead_offset-8,y:@toolhead_width-1.5+y_offset,z:@toolhead_width/2.0) if args[:show]
+		
 		# Hinge to toolhead connection
 		res += hull(
 					cylinder(d:@hinge_area_diameter,h:@hinge_area_height).translate(z:raise_z),
