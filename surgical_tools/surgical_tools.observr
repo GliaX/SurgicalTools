@@ -1,13 +1,13 @@
 
 system("./surgical_tools.rb")
-watch( 'surgical_tools.rb' )  {|md|
+watch( 'surgical_tools.rb' )  {|file|
    system("./surgical_tools.rb")
 }
 
-watch( 'lib/(.*).rb' )  {|md|
-   system("./surgical_tools.rb")
+watch( 'lib/(.*).rb' )  {|file|
+   system("./surgical_tools.rb #{file}")
 }
 
-watch( 'lib/*/(.*).rb' )  {|md|
-   system("./surgical_tools.rb")
+watch( 'lib/*/(.*).rb' )  {|file|
+   system("./surgical_tools.rb #{file}")
 }

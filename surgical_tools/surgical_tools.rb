@@ -41,6 +41,10 @@ res.save("surgical_tools.scad","$fn=64;")
 @@bom.save("bom.txt")
 
 tools = [StraightHemostat,NeedleDriver,TowelClamp,SpongeStick]
+# if we have a command line parameter
+if ARGV[0]
+	tools = get_classes_from_file(ARGV[0])
+end
 tools.each{|tool| save_all(tool)}
 
 
