@@ -3,7 +3,7 @@ class Forceps < CrystalScad::Printed
 
 	def initialize(args={})
 		# Side wall thickness of the grips
-		@thickness = args[:thickness] || 1
+		@thickness = args[:thickness] || 3
 		
 		# This is the height, this should be set according to the rest of the part 
 		@height = args[:height] || 7.5		
@@ -27,7 +27,7 @@ class Forceps < CrystalScad::Printed
 		pipe.line(10)		
 		pipe.cw(300,5)
 		pipe.cw(300,5)
-		pipe.line(10)		
+		pipe.line(40)		
 		pipe.pipe
 	end
 
