@@ -106,9 +106,7 @@ class StraightHemostat < CrystalScad::Printed
 		# I need to calculate one side of the y value for putting the grip in the right place
 		y = ((pipe.x+@arm_additional_length) / Math::sin(radians(90-@arm_angle))) * Math::sin(radians(@arm_angle)) 
 
-		@lower += Grip.new(height:@height).part(show).mirror(y:1).rotate(z:-@arm_angle).translate(y:y/2.0)
-		@upper += Grip.new(height:@height).part(show).mirror(y:1).rotate(z:-@arm_angle).translate(y:y/2.0)
-		
+		attach_grip(show,y)
 	
 		# Locking pins
 		@lower += locking_pins.translate(x:-@holding_pins_width).mirror(y:1).rotate(z:-@holding_pin_rotation).translate(y:y/2.0)
@@ -129,6 +127,11 @@ class StraightHemostat < CrystalScad::Printed
 		end	
 
 		res		
+	end
+
+	def attach_grip(show,y)
+		@lower += Grip.new(height:@height).part(show).mirror(y:1).rotate(z:-@arm_angle).translate(y:y/2.0)
+		@upper += Grip.new(height:@height).part(show).mirror(y:1).rotate(z:-@arm_angle).translate(y:y/2.0)
 	end
 
 	def print_plate

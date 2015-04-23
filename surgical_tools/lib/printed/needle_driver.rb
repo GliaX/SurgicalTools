@@ -9,7 +9,7 @@ class NeedleDriver <  StraightHemostat
 		# Height of the arms and the rest apart from the hinge
 		@height = 7
 		# Thickness of the arms
-		@arm_thickness = 11
+		@arm_thickness = 5.5
 
 		# Bending radius of the arm 	
 		@arm_radius=155
@@ -23,13 +23,13 @@ class NeedleDriver <  StraightHemostat
 
 		@hinge_area_height = @height / 2.0
 
-		@hinge_area_diameter = 23
+		@hinge_area_diameter = 17
 		@hinge_hole_diameter = 3.4
 		@hinge_clearance = 1.5 # extra clearance for the hinge, higher values mean more possible rotation
 
-		@toolhead_width = 12	
-		@toolhead_tip_width = 6
-		@toolhead_length = 25.2
+		@toolhead_width = 7	
+		@toolhead_tip_width = 4
+		@toolhead_length = 30.2
 		
 		# Layer height, needed for the toolhead
 		@layer_height = 0.2
@@ -45,6 +45,16 @@ class NeedleDriver <  StraightHemostat
 
 	def view2
 		@opening_angle = -11.2
+	end
+
+	def attach_grip(show,y)
+		@lower += Grip.new(height:@height).part(show).mirror(y:1).rotate(z:-@arm_angle).translate(y:y/2.0)
+		@upper += Grip.new(height:@height).part(show).mirror(y:1).rotate(z:-@arm_angle).translate(y:y/2.0)
+
+		# Attach a bit more material to the grip, which does not work otherwise 	
+		# because the size of the pipe is too small
+		@lower += cube([5,6,@height]).rotate(z:-@arm_angle).translate(y:y/2.0+3)
+		@upper += cube([5,6,@height]).rotate(z:-@arm_angle).translate(y:y/2.0+3)
 	end
 
 	def toolhead(args={})
