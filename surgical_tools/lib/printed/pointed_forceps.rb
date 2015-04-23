@@ -18,6 +18,14 @@ class PointedForceps < Forceps
 
 		res -= cube([40,40,20]).rotate(y:-15).translate(x:-0.1,y:-20,z:-3).color("red")
 
+		# To counter horizontal movement, add a bolt
+		b = Bolt.new(3,10)
+		res -= b.output.rotate(x:90).translate(x:32,y:@thickness/2.0)
+		res += b.show.rotate(x:90).translate(x:32,y:@thickness/2.0) if show
+
+		# making the other side a long slot instead
+		res -= long_slot(d:3.3,h:10,l:4).rotate(x:90).translate(x:32-2,y:-@thickness/2.0-5)
+
 		res
 	end
 
