@@ -1,17 +1,11 @@
-class Forceps < CrystalScad::Printed
+class PointedForceps < Forceps
 
-
-	def initialize(args={})
-		# Side wall thickness of the grips
-		@thickness = args[:thickness] || 3
-		
-		# This is the height, this should be set according to the rest of the part 
-		@height = args[:height] || 7.5		
-	end
 
 	def part(show)
 		res = side
 		res += side.mirror(y:1).translate(y:-13)
+
+		res -= cube([40,40,20]).rotate(y:-15).translate(x:-0.1,y:-20,z:-3).color("red")
 
 		res
 	end
@@ -23,7 +17,7 @@ class Forceps < CrystalScad::Printed
 		pipe.line(10)		
 		pipe.cw(300,5)
 		pipe.cw(300,5)
-		pipe.line(40)		
+		pipe.line(60)		
 		pipe.pipe
 	end
 
