@@ -15,7 +15,7 @@ class StraightHemostat < CrystalScad::Printed
 		@holding_pin_spacing = 1.5
 	
 		# Rotation of the holding pins
-		@holding_pin_rotation = 6
+		@holding_pin_rotation = 6.9
 
 		# Height of the arms and the rest apart from the hinge
 		@height = 7	
@@ -52,7 +52,7 @@ class StraightHemostat < CrystalScad::Printed
 	end
 
 	def view2
-		@opening_angle = -13.6
+		@opening_angle = -13.7
 	end
 
 
