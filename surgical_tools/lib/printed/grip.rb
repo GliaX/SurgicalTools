@@ -31,7 +31,7 @@ class Grip < CrystalScad::Printed
 		# that part that was just intersected is now put together with the hull() command
 		# to a 1x1x@height cube. Translating it to the outer_right / top point minus one, which is the cube size
 		res += hull(arc,
-								cube([1,1,@height]).translate(x:outer_right-1, y:top-1)
+								cube([1,1,@height]).translate(x:outer_right-1, y:top-1-2.5) # I have hacked the -2.5 here in order to not interfere with pulled back locking mechanism
 		)
 
 

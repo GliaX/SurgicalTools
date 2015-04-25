@@ -52,7 +52,7 @@ class StraightHemostat < CrystalScad::Printed
 	end
 
 	def view2
-		@opening_angle = -11.2
+		@opening_angle = -13.6
 	end
 
 
@@ -111,8 +111,8 @@ class StraightHemostat < CrystalScad::Printed
 		
 	
 		# Locking pins
-		@lower += locking_pins.translate(x:-@holding_pins_width).mirror(y:1).rotate(z:-@holding_pin_rotation).translate(y:y/2.0)
-		@upper += locking_pins.mirror(z:1).translate(x:-@holding_pins_width,z:@height).mirror(y:1).rotate(z:-@holding_pin_rotation).translate(y:y/2.0)		
+		@lower += locking_pins.translate(x:-@holding_pins_width).mirror(y:1).rotate(z:-@holding_pin_rotation).translate(y:y/2.0+2.5)
+		@upper += locking_pins.mirror(z:1).translate(x:-@holding_pins_width,z:@height).mirror(y:1).rotate(z:-@holding_pin_rotation).translate(y:y/2.0+2.5)		
 
 
 		# Moving it all back to hinge as center
