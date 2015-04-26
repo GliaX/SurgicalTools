@@ -45,6 +45,9 @@ class StraightHemostat < CrystalScad::Printed
 		# Angle of the two parts to each other, only for show
 		@opening_angle = 0
 
+		# switch used for tools that require support material 
+		@add_support_for_lower = false
+
 	end
 	
 	def view1
@@ -113,6 +116,14 @@ class StraightHemostat < CrystalScad::Printed
 		# Locking pins
 		@lower += locking_pins.translate(x:-@holding_pins_width).mirror(y:1).rotate(z:-@holding_pin_rotation).translate(y:y/2.0)
 		@upper += locking_pins.mirror(z:1).translate(x:-@holding_pins_width,z:@height).mirror(y:1).rotate(z:-@holding_pin_rotation).translate(y:y/2.0)		
+
+
+		if show == false && @add_support_for_lower == true
+			@lower += cube([12,8,@holding_pins_height]).translate(x:-@holding_pins_width,y:3).mirror(y:1).rotate(z:-@holding_pin_rotation).translate(y:y/2.0,z:@height-@holding_pins_height)
+			# fixing first tooth
+			@lower += cube([12,2,@holding_pins_height+0.2]).translate(x:-@holding_pins_width,y:10).mirror(y:1).rotate(z:-@holding_pin_rotation).translate(y:y/2.0,z:@height-@holding_pins_height-0.2)
+
+		end
 
 
 		# Moving it all back to hinge as center
