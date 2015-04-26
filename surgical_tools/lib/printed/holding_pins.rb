@@ -10,10 +10,10 @@ class HoldingPins < CrystalScad::Printed
 		@base_height = args[:height] || 7 
 
 		# height of the valleys
-		@valley_height = 2.2	
-		@valley_spacing = 0.9
-		@mountain_height = 4.6 
-		@mountain_thickness = 0.8
+		@valley_height = args[:valley_height] || 2.2	
+		@valley_spacing = args[:valley_spacing] || 0.9
+		@mountain_height = args[:mountain_height] || 4.6 
+		@mountain_thickness = args[:mountain_thickness] || 0.8
 
 		# the first tooth is tiny bit smaller
 		@first_tooth_mountain_height = @mountain_height - 0.2

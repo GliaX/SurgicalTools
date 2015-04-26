@@ -45,8 +45,14 @@ class StraightHemostat < CrystalScad::Printed
 		# Angle of the two parts to each other, only for show
 		@opening_angle = 0
 
+		
+		# Layer height, needed for support
+		@layer_height = 0.2
+
 		# switch used for tools that require support material 
 		@add_support_for_lower = false
+		@skip_hinge_hole = false
+
 
 	end
 	
@@ -84,17 +90,18 @@ class StraightHemostat < CrystalScad::Printed
 		@upper += pipe.pipe		
 
 
-		# Hinge inner cut
-		bolt = Bolt.new(3,8,type:7380)		
-		@lower -= bolt.output
-		@upper -= bolt.output
+		if @skip_hinge_hole == false
+			# Hinge inner cut
+			bolt = Bolt.new(3,8,type:7380)		
+			@lower -= bolt.output
+			@upper -= bolt.output
 		
-		# nut on the other side of the hinge
-		nut = Nut.new(3)
-		@upper -= nut.output.translate(z:@height-1.5)
-		# Support structure
-		@upper += cylinder(d:3.25,h:1.5).translate(z:@height-1.5)
-		
+			# nut on the other side of the hinge
+			nut = Nut.new(3)
+			@upper -= nut.output.translate(z:@height-1.5)
+			# Support structure
+			@upper += nut.add_support(@layer_height).translate(z:@height-1.5)
+		end		
 	
 
 		# Cutting out the excess walls of the hinge, so it can open freely, to a degree.
@@ -109,9 +116,7 @@ class StraightHemostat < CrystalScad::Printed
 		# I need to calculate one side of the y value for putting the grip in the right place
 		y = ((pipe.x+@arm_additional_length) / Math::sin(radians(90-@arm_angle))) * Math::sin(radians(@arm_angle)) 
 
-		@lower += Grip.new(height:@height).part(show).mirror(y:1).rotate(z:-@arm_angle).translate(y:y/2.0)
-		@upper += Grip.new(height:@height).part(show).mirror(y:1).rotate(z:-@arm_angle).translate(y:y/2.0)
-		
+		attach_grip(show,y)
 	
 		# Locking pins
 		@lower += locking_pins.translate(x:-@holding_pins_width).mirror(y:1).rotate(z:-@holding_pin_rotation).translate(y:y/2.0)
@@ -130,6 +135,7 @@ class StraightHemostat < CrystalScad::Printed
 		@lower.translate(x:-pipe.x-@arm_additional_length)
 		@upper.translate(x:-pipe.x-@arm_additional_length)
 
+		pre_plating_mods
 			
 
 		if show
@@ -140,6 +146,14 @@ class StraightHemostat < CrystalScad::Printed
 		end	
 
 		res		
+	end
+
+	def attach_grip(show,y)
+		@lower += Grip.new(height:@height).part(show).mirror(y:1).rotate(z:-@arm_angle).translate(y:y/2.0)
+		@upper += Grip.new(height:@height).part(show).mirror(y:1).rotate(z:-@arm_angle).translate(y:y/2.0)
+	end
+
+	def pre_plating_mods
 	end
 
 	def print_plate

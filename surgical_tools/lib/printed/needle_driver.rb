@@ -7,9 +7,10 @@ class NeedleDriver <  StraightHemostat
 		super(args)
 
 		# Height of the arms and the rest apart from the hinge
-		@height = 7
+		@height = 1.8+6.5+0.2 # adjusted to approx dimensions of F 2,9 x 6,5 DIN 7971 
+		
 		# Thickness of the arms
-		@arm_thickness = 11
+		@arm_thickness = 6.5
 
 		# Bending radius of the arm 	
 		@arm_radius=155
@@ -23,11 +24,11 @@ class NeedleDriver <  StraightHemostat
 
 		@hinge_area_height = @height / 2.0
 
-		@hinge_area_diameter = 23
+		@hinge_area_diameter = 12
 		@hinge_hole_diameter = 3.4
 		@hinge_clearance = 1.5 # extra clearance for the hinge, higher values mean more possible rotation
 
-		@toolhead_width = 12	
+		@toolhead_width = 9	
 		@toolhead_tip_width = 6
 		@toolhead_length = 25.2
 		
@@ -37,6 +38,7 @@ class NeedleDriver <  StraightHemostat
 		# Angle of the two parts to each other, only for show
 		@opening_angle = 0
 
+		@skip_hinge_hole = true
 	end
 	
 	def view1
@@ -45,6 +47,38 @@ class NeedleDriver <  StraightHemostat
 
 	def view2
 		@opening_angle = -11.2
+	end
+
+	def locking_pins
+		res = HoldingPins.new(height:@height,valley_height:2.2+0.8,mountain_height:4.6+0.8).output
+	end
+
+	def attach_grip(show,y)
+		@lower += Grip.new(height:@height).part(show).mirror(y:1).rotate(z:-@arm_angle).translate(y:y/2.0)
+		@upper += Grip.new(height:@height).part(show).mirror(y:1).rotate(z:-@arm_angle).translate(y:y/2.0)
+
+		# Attach a bit more material to the grip, which does not work otherwise 	
+		# because the size of the pipe is too small
+		@lower += cube([5,6,@height]).rotate(z:-@arm_angle).translate(y:y/2.0+3)
+		@upper += cube([5,6,@height]).rotate(z:-@arm_angle).translate(y:y/2.0+3)
+	end
+
+	def pre_plating_mods
+		# create our custom hinge, using a 
+		# DIN 7971 bolt F2,9 x 6,5
+	  
+		hole_dia = 3
+		@upper -= cylinder(d:hole_dia,h:@height)
+		@lower -= cylinder(d:hole_dia+0.5,h:@height) # Don't make the screw bite into the lower part, just the other one
+		
+		# hole for the bolt head
+		@lower -= cylinder(d:5.6+0.4,h:1.8)
+
+		# support for the bolt hole
+		@lower += cylinder(d:hole_dia+0.5-0.15,h:1.8-@layer_height)
+		@lower += cylinder(d:5.3,h:@layer_height)
+
+
 	end
 
 	def toolhead(args={})
