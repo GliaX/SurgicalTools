@@ -78,6 +78,10 @@ class NeedleDriver <  StraightHemostat
 		@lower += cylinder(d:hole_dia+0.5-0.15,h:1.8-@layer_height)
 		@lower += cylinder(d:5.3,h:@layer_height)
 
+		# since the hinge is so small here, I need to cut excess manually
+		@lower -= long_slot(d:@hinge_area_diameter+@hinge_clearance,l:@hinge_area_diameter,h:@hinge_area_height+0.1).translate(x:-@hinge_area_diameter/2.0).rotate(z:60).translate(z:@hinge_area_height)
+			
+		@upper -= long_slot(d:@hinge_area_diameter+@hinge_clearance,l:@hinge_area_diameter,h:@hinge_area_height+0.1).translate(x:-@hinge_area_diameter/2.0).rotate(z:60)
 
 	end
 
