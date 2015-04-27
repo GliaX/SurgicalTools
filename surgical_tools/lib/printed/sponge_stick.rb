@@ -71,13 +71,24 @@ class SpongeStick <  StraightHemostat
 
 	def print_plate
 		res	= @lower.mirror(z:1)
+		res += @upper.mirror(y:1).mirror(z:1).rotate(z:5)
+		res = res.color("PaleTurquoise")
+		res -= cylinder(d:@hinge_area_diameter,h:@layer_height*2).translate(z:-@hinge_area_height-@layer_height)
+		res += support_grid.translate(z:-@hinge_area_height-@layer_height).color("red")
+		res += support_grid.rotate(z:90).translate(z:-@hinge_area_height).color("pink")
 
-		# support material, hinge and connector to toolhead
-		res += cylinder(d:@hinge_area_diameter,h:@hinge_area_height-@layer_height*1.5).translate(z:-@height)
-		res += cube([10,9,@hinge_area_height-@layer_height*1.5]).translate(x:6.8,y:-9,z:-@height)
 
-		
-		res += @upper.translate(y:@holding_pins_length*2).mirror(z:1).translate(x:14,y:6,z:0)
+		res
+	end
+
+	# Support grid for printing the hinge area
+	def support_grid
+		res = nil		
+		20.times do |x|
+			res += cylinder(d:0.6,h:@hinge_area_diameter).rotate(x:90).translate(x:@hinge_area_diameter/2.0-x*1.8,y:@hinge_area_diameter/2.0)
+		end
+
+		res *= cylinder(d:@hinge_area_diameter,h:@layer_height)
 		res
 	end
 
