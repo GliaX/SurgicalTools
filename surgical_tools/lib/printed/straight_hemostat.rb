@@ -100,7 +100,7 @@ class StraightHemostat < CrystalScad::Printed
 			nut = Nut.new(3)
 			@upper -= nut.output.translate(z:@height-1.5)
 			# Support structure
-			@upper += nut.add_support(@layer_height).translate(z:@height-1.5)
+			@upper += nut.add_support(@layer_height).mirror(z:1).translate(z:@height)
 		end		
 	
 
