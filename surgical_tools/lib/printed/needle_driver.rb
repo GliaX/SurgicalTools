@@ -67,15 +67,17 @@ class NeedleDriver <  StraightHemostat
 		# create our custom hinge, using a 
 		# DIN 7971 bolt F2,9 x 6,5
 	  
-		hole_dia = 3
+		lower_hole_dia = 3.1
+		hole_dia = 2.45
+		holt_hole_height=2.4
 		@upper -= cylinder(d:hole_dia,h:@height)
-		@lower -= cylinder(d:hole_dia+0.5,h:@height) # Don't make the screw bite into the lower part, just the other one
+		@lower -= cylinder(d:lower_hole_dia,h:@height) # Don't make the screw bite into the lower part, just the other one
 		
 		# hole for the bolt head
-		@lower -= cylinder(d:5.6+0.4,h:1.8)
+		@lower -= cylinder(d:5.6+0.5,h:holt_hole_height)
 
 		# support for the bolt hole
-		@lower += cylinder(d:hole_dia+0.5-0.15,h:1.8-@layer_height)
+		@lower += cylinder(d:hole_dia+0.5-0.15,h:holt_hole_height-@layer_height)
 		@lower += cylinder(d:5.3,h:@layer_height)
 
 		# since the hinge is so small here, I need to cut excess manually
