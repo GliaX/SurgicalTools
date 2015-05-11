@@ -132,8 +132,8 @@ class StraightHemostat < CrystalScad::Printed
 
 
 		# Moving it all back to hinge as center
-		@lower.translate(x:-pipe.x-@arm_additional_length)
-		@upper.translate(x:-pipe.x-@arm_additional_length)
+		@lower = @lower.translate(x:-pipe.x-@arm_additional_length)
+		@upper = @upper.translate(x:-pipe.x-@arm_additional_length)
 
 		pre_plating_mods
 			
@@ -151,6 +151,7 @@ class StraightHemostat < CrystalScad::Printed
 	def attach_grip(show,y)
 		@lower += Grip.new(height:@height).part(show).mirror(y:1).rotate(z:-@arm_angle).translate(y:y/2.0)
 		@upper += Grip.new(height:@height).part(show).mirror(y:1).rotate(z:-@arm_angle).translate(y:y/2.0)
+		return nil
 	end
 
 	def pre_plating_mods
