@@ -13,11 +13,16 @@ class HoldingPins < CrystalScad::Printed
 
 		# height of the valleys
 		@valley_height = args[:valley_height] || 2.2
-		@valley_spacing = args[:valley_spacing] || 0.9+1
+		@valley_spacing = args[:valley_spacing] || 1.9
+		@first_tooth_extra_valley_spacing = args[:first_tooth_extra_valley_spacing] || 0.5
 		@mountain_height = args[:mountain_height] || 4.6 
 		@mountain_thickness = args[:mountain_thickness] || 0.8
 
-		@angle_width = 2.5
+		@angle_width = 2.2
+		
+	
+		@rotations = args[:rotations] || [0,0,0]
+		@extra_teeth = args[:extra_teeth] || [0,0,0]
 
 	end
 
@@ -52,14 +57,22 @@ class HoldingPins < CrystalScad::Printed
 
 	def part(show)
 		res = connection_wall
-		x = @additional_connection_wall	+ @angle_width
-
-
-		3.times do 	
+		x = @additional_connection_wall	+ @angle_width 
+		res += valley.translate(x:x)
+		x += @first_tooth_extra_valley_spacing
+		3.times do |i|	
 			res += valley.translate(x:x)
 			x += @valley_spacing
+						
 			res += tooth.translate(x:x)
-			x += 2.5 + @mountain_thickness
+			if @extra_teeth[i].to_f != 0.0
+				res += tooth.translate(x:x+@extra_teeth[i])				
+			end
+			
+			if @rotations[i].to_f != 0.0
+				res += tooth.rotate(y:@rotations[i]).translate(x:x)
+			end
+			x += @angle_width + @mountain_thickness
 		end
 
 		res.rotate(x:90).rotate(z:90).translate(y:-@additional_connection_wall)

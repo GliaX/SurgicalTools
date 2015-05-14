@@ -3,7 +3,7 @@ class StraightHemostat < CrystalScad::Printed
 		@holding_pins_width = 7
 		@holding_pins_length = 10
 		# Valleys of the holding pins			
-		@holding_pins_base_height = 2.2
+		@holding_pins_base_height = 2.2 
 		# Highest part of the holding pins
 		@holding_pins_height = 3.2
 
@@ -15,8 +15,7 @@ class StraightHemostat < CrystalScad::Printed
 		@holding_pin_spacing = 1.5
 	
 		# Rotation of the holding pins
-		@holding_pin_rotation = 6
-
+		@holding_pin_rotation = 3.8
 		# Height of the arms and the rest apart from the hinge
 		@height = 7	
 		# Thickness of the arms
@@ -53,6 +52,9 @@ class StraightHemostat < CrystalScad::Printed
 		@add_support_for_lower = false
 		@skip_hinge_hole = false
 
+		# Options for the lower lock only
+		@locking_pin_teeth = [0,-0.0,0]
+		@locking_pin_rotations = [0,0,0]
 
 	end
 	
@@ -61,9 +63,16 @@ class StraightHemostat < CrystalScad::Printed
 	end
 
 	def view2
-		@opening_angle = -11.2
+		@opening_angle = -0.35
 	end
 
+	def view3
+		@opening_angle = -4.6
+	end
+
+	def view4
+		@opening_angle = -7.75
+	end
 
 	def part(show)
 		@lower = nil
@@ -119,7 +128,7 @@ class StraightHemostat < CrystalScad::Printed
 		attach_grip(show,y)
 	
 		# Locking pins
-		@lower += locking_pins.translate(x:-@holding_pins_width).mirror(y:1).rotate(z:-@holding_pin_rotation).translate(y:y/2.0)
+		@lower += lower_locking_pins.translate(x:-@holding_pins_width).mirror(y:1).rotate(z:-@holding_pin_rotation).translate(y:y/2.0)
 		@upper += locking_pins.mirror(z:1).translate(x:-@holding_pins_width,z:@height).mirror(y:1).rotate(z:-@holding_pin_rotation).translate(y:y/2.0)		
 
 
@@ -167,6 +176,9 @@ class StraightHemostat < CrystalScad::Printed
 		res = HoldingPins.new(height:@height).output
 	end
 
+	def lower_locking_pins
+		res = HoldingPins.new(height:@height,rotations:@locking_pin_rotations, extra_teeth:@locking_pin_teeth).output
+	end
 
 	def toolhead(args={})
 		raise_z = args[:raise_z] || 0 # for hinge
