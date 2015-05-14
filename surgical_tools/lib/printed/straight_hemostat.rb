@@ -15,7 +15,7 @@ class StraightHemostat < CrystalScad::Printed
 		@holding_pin_spacing = 1.5
 	
 		# Rotation of the holding pins
-		@holding_pin_rotation = 3.8
+		@holding_pin_rotation = 6
 		# Height of the arms and the rest apart from the hinge
 		@height = 7	
 		# Thickness of the arms
@@ -23,9 +23,9 @@ class StraightHemostat < CrystalScad::Printed
 
 		# Bending radius of the arm 	
 		@arm_radius=155
-		@arm_angle=20
+		@arm_angle=24
 		# Additional length of straight line towards the grip
-		@arm_additional_length = 30
+		@arm_additional_length = 25
 
 		# spacing between the arms
 		@arm_spacing = 5.2
@@ -52,9 +52,10 @@ class StraightHemostat < CrystalScad::Printed
 		@add_support_for_lower = false
 		@skip_hinge_hole = false
 
-		# Options for the lower lock only
-		@locking_pin_teeth = [0,-0.0,0]
-		@locking_pin_rotations = [0,0,0]
+		@locking_pin_rotations = [0,-3,-7]
+		@extra_valley_spacings = [0,1,1]
+
+		@raise_upper = 0
 
 	end
 	
@@ -63,15 +64,18 @@ class StraightHemostat < CrystalScad::Printed
 	end
 
 	def view2
-		@opening_angle = -0.35
+		@opening_angle = -4.7
+		@raise_upper = 1.2
 	end
 
 	def view3
-		@opening_angle = -4.6
+		@opening_angle = -8.3
+		@raise_upper = 1.2
 	end
 
 	def view4
-		@opening_angle = -7.75
+		@opening_angle = -11.92
+		@raise_upper = 1.2
 	end
 
 	def part(show)
@@ -146,6 +150,9 @@ class StraightHemostat < CrystalScad::Printed
 
 		pre_plating_mods
 			
+		if @raise_upper > 0
+			@upper = @upper.translate(z:@raise_upper)		
+		end
 
 		if show
 			res	= @lower.color("Aquamarine") 
@@ -163,21 +170,21 @@ class StraightHemostat < CrystalScad::Printed
 		return nil
 	end
 
-	def pre_plating_mods
+	def pre_plating_mods	
 	end
 
 	def print_plate
 		res	= @lower
-		res += @upper.translate(y:@holding_pins_length*2).mirror(z:1).translate(x:14,y:6,z:@height)
+		res += @upper.translate(y:@holding_pins_length*2).mirror(z:1).translate(x:16,y:12,z:@height)
 		res
 	end
 
 	def locking_pins
-		res = HoldingPins.new(height:@height).output
+		res = HoldingPins.new(height:@height,skip:[true,true,false],first_tooth_extra_valley_spacing:2.4).output
 	end
 
 	def lower_locking_pins
-		res = HoldingPins.new(height:@height,rotations:@locking_pin_rotations, extra_teeth:@locking_pin_teeth).output
+		res = HoldingPins.new(height:@height,rotations:@locking_pin_rotations,extra_valley_spacings:@extra_valley_spacings).output
 	end
 
 	def toolhead(args={})
