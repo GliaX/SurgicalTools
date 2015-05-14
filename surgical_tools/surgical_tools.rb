@@ -34,18 +34,7 @@ require_all "lib/**/*.rb"
 # Others:
 # 	scalpel handle
 
-
-res = Surgical_toolsAssembly.new.show
-
-res.save("surgical_tools.scad","$fn=64;")
-@@bom.save("bom.txt")
-
-tools = [StraightHemostat,NeedleDriver,TowelClamp,SpongeStick,Forceps,PointedForceps,SpikedForceps]
-# if we have a command line parameter
-if ARGV[0]
-	tools = get_classes_from_file(ARGV[0])
-end
-tools.each{|tool| save_all(tool)}
+save!
 
 
 
