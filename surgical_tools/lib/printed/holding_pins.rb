@@ -1,5 +1,7 @@
 class HoldingPins < CrystalScad::Printed
-
+	view :tooth
+	view :connection_wall
+	
 	def initialize(args={})
 		@holding_pins_width = 12
 
@@ -10,75 +12,57 @@ class HoldingPins < CrystalScad::Printed
 		@base_height = args[:height] || 7 
 
 		# height of the valleys
-		@valley_height = args[:valley_height] || 2.2	
-		@valley_spacing = args[:valley_spacing] || 0.9
+		@valley_height = args[:valley_height] || 2.2
+		@valley_spacing = args[:valley_spacing] || 0.9+1
 		@mountain_height = args[:mountain_height] || 4.6 
 		@mountain_thickness = args[:mountain_thickness] || 0.8
 
-		# the first tooth is tiny bit smaller
-		@first_tooth_mountain_height = @mountain_height - 0.2
+		@angle_width = 2.5
 
+	end
+
+	def tooth
+		points = []		
+		points << [0,0]
+		points << [0,@mountain_height] # valley 
+		points << [@mountain_thickness,@mountain_height] # valley 
+		points << [@mountain_thickness+@angle_width,@valley_height] # valley 
+		points << [@mountain_thickness+@angle_width,0] # valley 
+		polygon(points:points).linear_extrude(height:@holding_pins_width)  
+	end
+
+	def connection_wall
+		points = []		
+		points << [0,0]
+		points << [0,@base_height] # the connection from the grip
+		points << [@additional_connection_wall,@base_height] # additional wall to connect to the grip
+		points << [@additional_connection_wall+@angle_width,@valley_height] # triangle top 
+		points << [@additional_connection_wall+@angle_width,0] # triangle top 
+		polygon(points:points).linear_extrude(height:@holding_pins_width)  	
+	end
+
+	def valley
+		points = []		
+		points << [0,0]
+		points << [0,@valley_height]		
+		points << [@valley_spacing,@valley_height]
+		points << [@valley_spacing,0]
+		polygon(points:points).linear_extrude(height:@holding_pins_width)  		
 	end
 
 	def part(show)
-
-		# I'm drawing the holding pins as a 2d polygon here and will extrude it later.
-		points = []
-		points << [0,0] # starting point
-		points << [0,@base_height] # the connection from the grip
-
-		x = @additional_connection_wall
-		points << [x,@base_height] # additional wall to connect to the grip
+		res = connection_wall
+		x = @additional_connection_wall	+ @angle_width
 
 
-		x += 2.5		
-		points << [x,@valley_height] # triangle top 
-			
-		
-		# teeth	
-		3.times do |i| 		
-			if i == 2 
-				@mountain_height = @first_tooth_mountain_height
-			end
-
-			# making the first valley from the grip a bit longer
-			x += 0.4 if i == 0
-
+		3.times do 	
+			res += valley.translate(x:x)
 			x += @valley_spacing
-			points << [x,@valley_height] # valley 
-			points << [x,@mountain_height] # triangle 
-	
-			# I'm adding a bit more material to the tops, so they won't be printed single walled
-			x += @mountain_thickness
-			points << [x,@mountain_height] # triangle 
-
-		
-			# i'm making the last increment smaller, so it will not have excess material beyond the last tooth
-			if i == 2 		
-				x += 1
-			else
-				x += 1.5 
-			end	
-			points << [x,@valley_height] # bottom point on the right of the triangle 
-
+			res += tooth.translate(x:x)
+			x += 2.5 + @mountain_thickness
 		end
 
-
-
-		
-		# last point in x axis connects back to zero
-		points << [x,@valley_height]		
-		points << [x,0]		
-	
-		res = polygon(points:points)  
-
-#	I used this to debug the teeth gripping with the other side 
-#		res += polygon(points:points).mirror(y:1).mirror(x:1).translate(x:x+1.45,y:5.9) 
-
-		
-
-		res.linear_extrude(height:@holding_pins_width).rotate(x:90).rotate(z:90).translate(y:-@additional_connection_wall)
+		res.rotate(x:90).rotate(z:90).translate(y:-@additional_connection_wall)
 	end
-
 
 end
